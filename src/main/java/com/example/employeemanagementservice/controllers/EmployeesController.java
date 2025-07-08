@@ -1,12 +1,16 @@
 package com.example.employeemanagementservice.controllers;
 
 import com.example.employeemanagementservice.models.Employee;
+import com.example.employeemanagementservice.models.EmployeeSkill;
+import com.example.employeemanagementservice.models.EmployeeSkillSet;
 import com.example.employeemanagementservice.services.EmployeeService;
+import com.example.employeemanagementservice.services.SkillService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,9 +18,11 @@ import java.util.UUID;
 @RequestMapping("/employees")
 public class EmployeesController {
     private final EmployeeService employeeService;
+    private final SkillService skillService; //wh
     // Constructor injection (recommended)
-    public EmployeesController(EmployeeService employeeService) {
+    public EmployeesController(EmployeeService employeeService, SkillService skillService) {
         this.employeeService = employeeService;
+        this.skillService = skillService;
     }
     @GetMapping("/{id}")
     public Optional<Employee> getEmployeeById(@PathVariable UUID id) {
@@ -40,7 +46,19 @@ public class EmployeesController {
     public boolean ChangeEmployeeById(@PathVariable UUID id, @RequestBody EmployeeRequest request) {
         return employeeService.updateEmployee(id, request.firstName(), request.lastName(), request.title(), request.birthday());
     }
+    @GetMapping("/{id}/skills-set")
+    public Optional<EmployeeSkillSet> getEmployeeSkillsSetById(@PathVariable UUID id) {
+        return skillService.getEmployeeSkillSetById(id);
+    }
+    @PostMapping ("/{id}/skills-set")
+    public ResponseEntity<EmployeeSkillSet> setEmployeeSkills(@PathVariable UUID id, @RequestBody SkillSetRequest request) {
+        EmployeeSkillSet employeeSkillSet = skillService.setEmployeeSkillSetById(id, request.categorySkills());
+        return ResponseEntity.ok(employeeSkillSet);
+    }
     // DTO for Employee creation
     public record EmployeeRequest(String firstName, String lastName, String title, LocalDate
             birthday) {}
+    // DTO for SkillSet creation
+    public record SkillSetRequest(Map<Integer,
+            List<EmployeeSkill>> categorySkills) {}
 }
