@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.example.employeemanagementservice.exceptions.UserNotFoundException;
 import com.example.employeemanagementservice.models.Employee;
 import org.springframework.stereotype.Service;
 @Service
@@ -21,28 +22,30 @@ public class EmployeeService implements IEmployeeService {
         return employee;
     }
     @Override
-    public Optional<Employee> getEmployeeById(UUID id) {
-        return Optional.ofNullable(employees.get(id));
+    public Employee getEmployeeById(UUID id) {
+        return Optional.ofNullable(employees.get(id))
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
     @Override
     public List<Employee> getAllEmployee() {
         return new ArrayList<>(employees.values());
     }
     @Override
-    public boolean updateEmployee(UUID id, String firstName, String lastName, String title,
-                              LocalDate birthday) {
-        if (employees.containsKey(id)) {
-            Employee employee = employees.get(id);
+    public Employee updateEmployee(UUID id, String firstName, String lastName, String title,
+                                   LocalDate birthday) {
+        Employee employee = Optional.ofNullable(employees.get(id))
+                .orElseThrow(() -> new UserNotFoundException(id));
+
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
             employee.setTitle(title);
             employee.setBirthday(birthday);
-            return true;
-        }
-        return false;
+            return employee;
     }
     @Override
-    public boolean deleteEmployee(UUID id) {
-        return employees.remove(id) != null;
+    public void deleteEmployee(UUID id) {
+        if(employees.remove(id) == null){
+            throw new UserNotFoundException(id);
+        }
     }
 }

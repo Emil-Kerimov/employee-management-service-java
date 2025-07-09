@@ -1,5 +1,6 @@
 package com.example.employeemanagementservice.models;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -8,8 +9,9 @@ public class EmployeeSkillSet {
     private UUID employeeId;
     private Map<Integer, List<EmployeeSkill>> categorySkills; // categoryId -> skills
 
-    public EmployeeSkillSet() {
-        this.employeeId = UUID.randomUUID();
+    public EmployeeSkillSet(UUID employeeId) {
+        this.employeeId = employeeId;
+        this.categorySkills = new HashMap<>();
     }
 
     public EmployeeSkillSet(UUID employeeId, Map<Integer, List<EmployeeSkill>> categorySkills) {

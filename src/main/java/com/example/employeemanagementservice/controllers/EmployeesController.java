@@ -25,7 +25,7 @@ public class EmployeesController {
         this.skillService = skillService;
     }
     @GetMapping("/{id}")
-    public Optional<Employee> getEmployeeById(@PathVariable UUID id) {
+    public Employee getEmployeeById(@PathVariable UUID id) {
         return employeeService.getEmployeeById(id);
     }
     @GetMapping
@@ -39,15 +39,18 @@ public class EmployeesController {
         return ResponseEntity.ok(employee);
     }
     @DeleteMapping ("/{id}")
-    public boolean DeleteEmployeeById(@PathVariable UUID id) {
-        return employeeService.deleteEmployee(id);
+    public ResponseEntity<Void> deleteEmployeeById(@PathVariable UUID id) {
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.noContent().build();
     }
     @PutMapping ("/{id}")
-    public boolean ChangeEmployeeById(@PathVariable UUID id, @RequestBody EmployeeRequest request) {
-        return employeeService.updateEmployee(id, request.firstName(), request.lastName(), request.title(), request.birthday());
+    public ResponseEntity<Employee> changeEmployeeById(@PathVariable UUID id, @RequestBody EmployeeRequest request) {
+        Employee employee = employeeService.updateEmployee(id, request.firstName(),
+                request.lastName(), request.title(), request.birthday());
+        return ResponseEntity.ok(employee);
     }
     @GetMapping("/{id}/skills-set")
-    public Optional<EmployeeSkillSet> getEmployeeSkillsSetById(@PathVariable UUID id) {
+    public EmployeeSkillSet getEmployeeSkillsSetById(@PathVariable UUID id) {
         return skillService.getEmployeeSkillSetById(id);
     }
     @PostMapping ("/{id}/skills-set")
