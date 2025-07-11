@@ -1,53 +1,55 @@
 package com.example.employeemanagementservice.services;
 
 import com.example.employeemanagementservice.exceptions.SkillNotFoundException;
-import com.example.employeemanagementservice.exceptions.UserNotFoundException;
-import com.example.employeemanagementservice.models.*;
+import com.example.employeemanagementservice.models.Skill;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
-    private final EmployeeService employeeService;
-    private final Map<UUID, EmployeeSkillSet> sets = new HashMap<>();
-    private final Map<UUID, SkillCategory> categories = new HashMap<>();
     private final Map<Integer, Skill> skills = new HashMap<>();
+    private final AtomicInteger idSkillCounter = new AtomicInteger(1);
+    public List<Skill> getSkillsInCategory(Integer categoryId) {
+        getCategoryById(categoryId);
 
-    public SkillService(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+        return skills.values().stream().filter(s -> s.getCategoryId() == categoryId).collect(Collectors.toList());
     }
 
-//    public boolean updateEmployeeSkillSetById(UUID id, UUID uuid, Map<Integer, List<EmployeeSkill>> integerListMap) {
-//        if (sets.containsKey(id)) {
-//            EmployeeSkillSet employeeSkillSet = sets.get(id);
-//            employeeSkillSet.setEmployeeId(uuid);
-//            employeeSkillSet.setCategorySkills(integerListMap);
-//            return true;
-//        }
-//        return false;
-//    }
+    public Skill getSkillById(Integer categoryId, Integer id) {
+        getCategoryById(categoryId);
 
-    public EmployeeSkillSet getEmployeeSkillSetById(UUID id) {
-        employeeService.getEmployeeById(id);
-        sets.get(id);
-        return Optional.ofNullable(sets.get(id))
-                .orElse(new EmployeeSkillSet(id));
+        return Optional.ofNullable(skills.get(id))
+                .orElseThrow(() -> new SkillNotFoundException(id));
     }
-    public EmployeeSkillSet setEmployeeSkillSetById(UUID id, Map<Integer,
-            List<EmployeeSkill>> categorySkills) {
-        employeeService.getEmployeeById(id);
 
-        EmployeeSkillSet employeeSkillSet;
-        if(sets.containsKey(id)){
-            //if skillset exist update it
-            employeeSkillSet = sets.get(id);
-            employeeSkillSet.setCategorySkills(categorySkills);
-        } else {
-            employeeSkillSet = new EmployeeSkillSet(id, categorySkills);
+    public Skill createSkill(Integer CategoryId, String name) {
+        getCategoryById(CategoryId);
+        int newId = idSkillCounter.getAndIncrement();
+        Skill skill = new Skill(newId, name, CategoryId);
+        skills.put(newId, skill);
+        return skill;
+    }
+
+    public Skill updateSkillById(Integer categoryId, Integer id, String name, Integer categoryId1) {
+        getCategoryById(categoryId);
+        Skill skill = Optional.ofNullable(skills.get(id))
+                .orElse(new Skill());
+        skill.setName(name);
+        skill.setCategoryId(categoryId1);
+        skills.put(id, skill);
+        return skill;
+    }
+
+    public void deleteSkillById(Integer categoryId, Integer id) {
+        getCategoryById(categoryId);
+        if (skills.remove(id) == null) {
+            throw new SkillNotFoundException(id);
         }
-
-        sets.put(employeeSkillSet.getEmployeeId(), employeeSkillSet);
-        return employeeSkillSet;
     }
 }

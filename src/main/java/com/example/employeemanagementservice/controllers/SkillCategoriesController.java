@@ -43,31 +43,7 @@ public class SkillCategoriesController {
         skillCategoriesService.delete(categoryId);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/{categoryId}/skills")
-    public List<Skill> getSkillsInCategory(@PathVariable Integer categoryId){
-        return skillCategoriesService.getSkillsInCategory(categoryId);
-    }
-    @GetMapping("/{categoryId}/skills/{id}")
-    public Skill getSkillById(@PathVariable Integer categoryId, @PathVariable Integer id){
-        return skillCategoriesService.getSkillById(categoryId, id);
-    }
 
-    @PostMapping("/{categoryId}/skills")
-    public ResponseEntity<Skill> createSkill(@PathVariable Integer categoryId, @RequestBody SkillRequest skillRequest){
-        Skill skill = skillCategoriesService.createSkill(categoryId, skillRequest.name);
-        return ResponseEntity.ok(skill);
-    }
-    @PutMapping("/{categoryId}/skills/{id}")
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer categoryId, @PathVariable Integer id, @RequestBody SkillRequest skillRequest){
-        Skill skill = skillCategoriesService.updateSkillById(categoryId, id, skillRequest.name, skillRequest.categoryId);
-        return ResponseEntity.ok(skill);
-    }
-    @DeleteMapping("/{categoryId}/skills/{id}")
-    public ResponseEntity<Void> deleteSkill(@PathVariable Integer categoryId, @PathVariable Integer id){
-        skillCategoriesService.deleteSkillById(categoryId, id);
-        return ResponseEntity.noContent().build();
-    }
     public record CategoryRequest(String name, String area){}
-    public record SkillRequest(String name, Integer categoryId){}
 
 }

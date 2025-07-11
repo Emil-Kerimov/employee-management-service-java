@@ -4,25 +4,24 @@ import com.example.employeemanagementservice.models.Employee;
 import com.example.employeemanagementservice.models.EmployeeSkill;
 import com.example.employeemanagementservice.models.EmployeeSkillSet;
 import com.example.employeemanagementservice.services.EmployeeService;
-import com.example.employeemanagementservice.services.SkillService;
+import com.example.employeemanagementservice.services.EmployeeSkillService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/employees")
 public class EmployeesController {
     private final EmployeeService employeeService;
-    private final SkillService skillService; //wh
+    private final EmployeeSkillService employeeSkillService; //wh
     // Constructor injection (recommended)
-    public EmployeesController(EmployeeService employeeService, SkillService skillService) {
+    public EmployeesController(EmployeeService employeeService, EmployeeSkillService employeeSkillService) {
         this.employeeService = employeeService;
-        this.skillService = skillService;
+        this.employeeSkillService = employeeSkillService;
     }
     @GetMapping("/{id}")
     public Employee getEmployeeById(@PathVariable UUID id) {
@@ -51,11 +50,11 @@ public class EmployeesController {
     }
     @GetMapping("/{id}/skills-set")
     public EmployeeSkillSet getEmployeeSkillsSetById(@PathVariable UUID id) {
-        return skillService.getEmployeeSkillSetById(id);
+        return employeeSkillService.getEmployeeSkillSetById(id);
     }
     @PostMapping ("/{id}/skills-set")
     public ResponseEntity<EmployeeSkillSet> setEmployeeSkills(@PathVariable UUID id, @RequestBody SkillSetRequest request) {
-        EmployeeSkillSet employeeSkillSet = skillService.setEmployeeSkillSetById(id, request.categorySkills());
+        EmployeeSkillSet employeeSkillSet = employeeSkillService.setEmployeeSkillSetById(id, request.categorySkills());
         return ResponseEntity.ok(employeeSkillSet);
     }
     // DTO for Employee creation
