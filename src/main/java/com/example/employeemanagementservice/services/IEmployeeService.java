@@ -12,7 +12,7 @@ public interface IEmployeeService {
     // Get Employee by ID
     Employee getEmployeeById(UUID id);
 
-    // Get All Users
+    // Get All Employee
     List<Employee> getAllEmployee();
     // Update Employee
     Employee updateEmployee(UUID id, String firstName, String lastName, String title, LocalDate
