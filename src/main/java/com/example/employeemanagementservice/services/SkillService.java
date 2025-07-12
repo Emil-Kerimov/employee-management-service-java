@@ -1,54 +1,62 @@
 package com.example.employeemanagementservice.services;
 
+import com.example.employeemanagementservice.exceptions.CategoryNotFoundException;
 import com.example.employeemanagementservice.exceptions.SkillNotFoundException;
 import com.example.employeemanagementservice.models.Skill;
+import com.example.employeemanagementservice.repositories.SkillCategoryRepository;
+import com.example.employeemanagementservice.repositories.SkillRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
-    private final Map<Integer, Skill> skills = new HashMap<>();
-    private final AtomicInteger idSkillCounter = new AtomicInteger(1);
-    public List<Skill> getSkillsInCategory(Integer categoryId) {
-        getCategoryById(categoryId);
+    private final SkillCategoryRepository skillCategoryRepository;
+    private final SkillRepository skillRepository;
 
-        return skills.values().stream().filter(s -> s.getCategoryId() == categoryId).collect(Collectors.toList());
+    public SkillService(SkillCategoryRepository skillCategoryRepository, SkillRepository skillRepository) {
+        this.skillCategoryRepository = skillCategoryRepository;
+        this.skillRepository = skillRepository;
+    }
+    public void checkCategoryAvailability(Integer categoryId){
+        if(skillCategoryRepository.getCategoryById(categoryId) == null){
+            throw new CategoryNotFoundException(categoryId);
+        }
+    }
+
+    public List<Skill> getSkillsInCategory(Integer categoryId) {
+        checkCategoryAvailability(categoryId);
+
+        return skillRepository.getAllSkillsInCategory(categoryId);
     }
 
     public Skill getSkillById(Integer categoryId, Integer id) {
-        getCategoryById(categoryId);
+        checkCategoryAvailability(categoryId);
 
-        return Optional.ofNullable(skills.get(id))
+        return Optional.ofNullable(skillRepository.getSkillByIdOrNull(id, categoryId))
                 .orElseThrow(() -> new SkillNotFoundException(id));
     }
 
-    public Skill createSkill(Integer CategoryId, String name) {
-        getCategoryById(CategoryId);
-        int newId = idSkillCounter.getAndIncrement();
-        Skill skill = new Skill(newId, name, CategoryId);
-        skills.put(newId, skill);
-        return skill;
+    public Skill createSkill(Integer categoryId, String name) {
+        checkCategoryAvailability(categoryId);
+        return skillRepository.save(name, categoryId);
     }
 
     public Skill updateSkillById(Integer categoryId, Integer id, String name, Integer categoryId1) {
-        getCategoryById(categoryId);
-        Skill skill = Optional.ofNullable(skills.get(id))
-                .orElse(new Skill());
+        checkCategoryAvailability(categoryId);
+        checkCategoryAvailability(categoryId1);
+        Skill skill = Optional.ofNullable(skillRepository.getSkillByIdOrNull(id, categoryId))
+                .orElseThrow(() -> new SkillNotFoundException(id));
         skill.setName(name);
         skill.setCategoryId(categoryId1);
-        skills.put(id, skill);
+        skillRepository.saveUpdatedCategory(id, skill);
         return skill;
     }
 
     public void deleteSkillById(Integer categoryId, Integer id) {
-        getCategoryById(categoryId);
-        if (skills.remove(id) == null) {
+        checkCategoryAvailability(categoryId);
+        if (!skillRepository.delete(id)) {
             throw new SkillNotFoundException(id);
         }
     }

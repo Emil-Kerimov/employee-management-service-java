@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public class SkillNotFoundException extends RuntimeException{
     public SkillNotFoundException(Integer id) {
-        super("Skill with id" + id + " not found");
+        super("Skill with id " + id + " not found");
     }
 }

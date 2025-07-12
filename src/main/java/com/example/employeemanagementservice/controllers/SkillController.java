@@ -18,28 +18,29 @@ public class SkillController {
     }
 
     @GetMapping
-    public List<Skill> getSkillsInCategory(@PathVariable Integer categoryId){
-        return SkillService.getSkillsInCategory(categoryId);
+    public List<Skill> getSkillsInCategory(@PathVariable Integer category_id){
+        return SkillService.getSkillsInCategory(category_id);
     }
-    @GetMapping("/{categoryId}/skills/{id}")
-    public Skill getSkillById(@PathVariable Integer categoryId, @PathVariable Integer id){
-        return SkillService.getSkillById(categoryId, id);
+    @GetMapping("/{id}")
+    public Skill getSkillById(@PathVariable Integer category_id, @PathVariable Integer id){
+        return SkillService.getSkillById(category_id, id);
     }
 
     @PostMapping
-    public ResponseEntity<Skill> createSkill(@PathVariable Integer categoryId, @RequestBody SkillRequest skillRequest){
-        Skill skill = SkillService.createSkill(categoryId, skillRequest.name);
+    public ResponseEntity<Skill> createSkill(@PathVariable Integer category_id, @RequestBody SkillCreateInCategoryRequest skillCreateInCategoryRequest){
+        Skill skill = SkillService.createSkill(category_id, skillCreateInCategoryRequest.name);
         return ResponseEntity.ok(skill);
     }
-    @PutMapping("/{categoryId}/skills/{id}")
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer categoryId, @PathVariable Integer id, @RequestBody SkillRequest skillRequest){
-        Skill skill = SkillService.updateSkillById(categoryId, id, skillRequest.name, skillRequest.categoryId);
+    @PutMapping("/{id}")
+    public ResponseEntity<Skill> updateSkill(@PathVariable Integer category_id, @PathVariable Integer id, @RequestBody SkillPutRequest skillPutRequest){
+        Skill skill = SkillService.updateSkillById(category_id, id, skillPutRequest.name, skillPutRequest.categoryId);
         return ResponseEntity.ok(skill);
     }
-    @DeleteMapping("/{categoryId}/skills/{id}")
-    public ResponseEntity<Void> deleteSkill(@PathVariable Integer categoryId, @PathVariable Integer id){
-        SkillService.deleteSkillById(categoryId, id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSkill(@PathVariable Integer category_id, @PathVariable Integer id){
+        SkillService.deleteSkillById(category_id, id);
         return ResponseEntity.noContent().build();
     }
-    public record SkillRequest(String name, Integer categoryId){}
+    public record SkillPutRequest(String name, Integer categoryId){}
+    public record SkillCreateInCategoryRequest(String name){}
 }

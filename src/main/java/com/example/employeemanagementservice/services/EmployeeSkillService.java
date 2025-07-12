@@ -1,38 +1,37 @@
 package com.example.employeemanagementservice.services;
 
+import com.example.employeemanagementservice.exceptions.EmployeeSkillSetNotFoundException;
+import com.example.employeemanagementservice.exceptions.UserNotFoundException;
 import com.example.employeemanagementservice.models.*;
+import com.example.employeemanagementservice.repositories.EmployeeRepository;
+import com.example.employeemanagementservice.repositories.EmployeeSkillRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class EmployeeSkillService {
-    private final EmployeeService employeeService;
-    private final Map<UUID, EmployeeSkillSet> sets = new HashMap<>();
+    private final EmployeeRepository employeeRepository;
+    private final EmployeeSkillRepository skillRepository;
 
-    public EmployeeSkillService(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public EmployeeSkillService(EmployeeRepository employeeRepository, EmployeeSkillRepository skillRepository) {
+        this.employeeRepository = employeeRepository;
+        this.skillRepository = skillRepository;
     }
 
     public EmployeeSkillSet getEmployeeSkillSetById(UUID id) {
-        employeeService.getEmployeeById(id);
-        return Optional.ofNullable(sets.get(id))
-                .orElse(new EmployeeSkillSet(id));
+        if(employeeRepository.getEmployeeById(id) == null){
+            throw new UserNotFoundException(id);
+        }
+        return Optional.ofNullable(skillRepository.getSkillSetById(id))
+                .orElseThrow(() -> new EmployeeSkillSetNotFoundException(id));
     }
     public EmployeeSkillSet setEmployeeSkillSetById(UUID id, Map<Integer,
             List<EmployeeSkill>> categorySkills) {
-        employeeService.getEmployeeById(id);
-
-        EmployeeSkillSet employeeSkillSet;
-        if(sets.containsKey(id)){
-            //if skillset exist update it
-            employeeSkillSet = sets.get(id);
-            employeeSkillSet.setCategorySkills(categorySkills);
-        } else {
-            employeeSkillSet = new EmployeeSkillSet(id, categorySkills);
+        if(employeeRepository.getEmployeeById(id) == null){
+            throw new UserNotFoundException(id);
         }
 
-        sets.put(employeeSkillSet.getEmployeeId(), employeeSkillSet);
-        return employeeSkillSet;
+        return skillRepository.save(id, categorySkills);
     }
 }

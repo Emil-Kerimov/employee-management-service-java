@@ -2,9 +2,7 @@ package com.example.employeemanagementservice.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +26,7 @@ public class EmployeeService implements IEmployeeService {
     }
     @Override
     public Employee getEmployeeById(UUID id) {
-        return Optional.ofNullable(employeeRepository.getEmployeeById(id))// There stopped(id))
+        return Optional.ofNullable(employeeRepository.getEmployeeById(id))
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
     @Override
