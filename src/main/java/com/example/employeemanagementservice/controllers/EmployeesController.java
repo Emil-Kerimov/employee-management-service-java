@@ -42,7 +42,9 @@ public class EmployeesController {
         return employeeService.getEmployeeById(id);
     }
     @GetMapping
-    @CommonEmployeeResponses
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully returned list of employees")
+    })
     @Operation(
             summary = "find all employees",
             description = "returns all available employees in memory"
