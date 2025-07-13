@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: employee-management-service
+settings:
+  applicationVersion: 1.0.0
+
+  testMode:
+    enabled: false
