@@ -1,10 +1,39 @@
 package com.example.employeemanagementservice.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Schema(
+        description = "Map of skills",
+        example = """
+                    {
+                      "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "categorySkills": {
+                        "1": [
+                              {
+                                "skillId": 101,
+                                "level": "EXPERT"
+                              }
+                            ],
+                        "2": [
+                              {
+                                "skillId": 101,
+                                "level": "EXPERT"
+                              }
+                            ],
+                        "3": [
+                              {
+                                "skillId": 101,
+                                "level": "EXPERT"
+                              }
+                            ]
+                          }
+                """
+)
 public class EmployeeSkillSet {
     private UUID employeeId;
     private Map<Integer, List<EmployeeSkill>> categorySkills; // categoryId -> skills

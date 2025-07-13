@@ -1,10 +1,13 @@
 package com.example.employeemanagementservice.controllers;
 
 import com.example.employeemanagementservice.annotations.CommonSkillCategoryResponses;
+import com.example.employeemanagementservice.annotations.DeleteApiResponses;
+import com.example.employeemanagementservice.annotations.NotFoundResponses;
 import com.example.employeemanagementservice.models.Skill;
 import com.example.employeemanagementservice.models.SkillCategory;
 import com.example.employeemanagementservice.services.SkillCategoriesService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,7 +43,8 @@ public class SkillCategoriesController {
             summary = "find Skill Category with specified ID",
             description = "returns Skill Category or throws 404"
     )
-    public SkillCategory getCategoryById(@PathVariable Integer categoryId){
+    public SkillCategory getCategoryById(@Parameter(description = "ID of the category", example = "1")
+            @PathVariable Integer categoryId){
         return skillCategoriesService.getCategoryById(categoryId);
     }
 
@@ -69,7 +73,8 @@ public class SkillCategoriesController {
         return ResponseEntity.ok(skillCategory);
     }
     @DeleteMapping("/{categoryId}")
-    @CommonSkillCategoryResponses
+    @DeleteApiResponses
+    @NotFoundResponses
     @Operation(
             summary = "delete Skill Category with specified ID",
             description = "deletes Skill Category with specified ID from memory if exist"

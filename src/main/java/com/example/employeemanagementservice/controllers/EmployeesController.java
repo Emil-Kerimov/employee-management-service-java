@@ -1,6 +1,8 @@
 package com.example.employeemanagementservice.controllers;
 
 import com.example.employeemanagementservice.annotations.CommonEmployeeResponses;
+import com.example.employeemanagementservice.annotations.DeleteApiResponses;
+import com.example.employeemanagementservice.annotations.NotFoundResponses;
 import com.example.employeemanagementservice.exceptions.GlobalExceptionHandler;
 import com.example.employeemanagementservice.models.Employee;
 import com.example.employeemanagementservice.models.EmployeeSkill;
@@ -8,6 +10,7 @@ import com.example.employeemanagementservice.models.EmployeeSkillSet;
 import com.example.employeemanagementservice.services.EmployeeService;
 import com.example.employeemanagementservice.services.EmployeeSkillService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +41,8 @@ public class EmployeesController {
             summary = "Search employee by ID",
             description = "returns the employee with the specified ID"
     )
-    public Employee getEmployeeById(@PathVariable UUID id) {
+    public Employee getEmployeeById(@Parameter(description = "ID of the employee", example = "a1b2c3d4-e5f6-7890-1234-567890abcdef")
+            @PathVariable UUID id) {
         return employeeService.getEmployeeById(id);
     }
     @GetMapping
@@ -66,7 +70,8 @@ public class EmployeesController {
         return ResponseEntity.ok(employee);
     }
     @DeleteMapping ("/{id}")
-    @CommonEmployeeResponses
+    @DeleteApiResponses
+    @NotFoundResponses
     @Operation(
             summary = "Delete employee with specified ID",
             description = "deletes employee with specified ID from memory"
@@ -106,9 +111,29 @@ public class EmployeesController {
         return ResponseEntity.ok(employeeSkillSet);
     }
     // DTO for Employee creation
-    public record EmployeeRequest(String firstName, String lastName, String title, LocalDate
+    public record EmployeeRequest(@Schema(description = "First name of the employee", example = "John") String firstName, String lastName, String title, LocalDate
             birthday) {}
     // DTO for SkillSet creation
-    public record SkillSetRequest(Map<Integer,
+    public record SkillSetRequest(
+            @Schema(
+                    description = "Map of skills",
+                    example = """
+            {
+                "1": [
+                    {
+                        "skillId": 101,
+                        "level": "EXPERT"
+                    }
+                ],
+                "2": [
+                    {
+                        "skillId": 102,
+                        "level": "BEGINNER"
+                    }
+                ]
+            }
+            """
+            )
+            Map<Integer,
             List<EmployeeSkill>> categorySkills) {}
 }

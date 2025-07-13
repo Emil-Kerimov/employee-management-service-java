@@ -16,15 +16,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK. Operation executed successfully"),
-        @ApiResponse(responseCode = "404", description = "No employee with this ID was found.",
-        content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = GlobalExceptionHandler.ErrorResponse.class),
-                examples = @ExampleObject(
-                        name = "Not Found Error",
-                        summary = "Example of a 404 error response",
-                        value = "{\"error\": \"Employee with id a1b2c3d4-e5f6-7890-1234-567890abcdef not found\"}"
-                )))
+        @ApiResponse(responseCode = "404", description = "No Skill/Category with this ID was found.",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = GlobalExceptionHandler.ErrorResponse.class),
+                        examples = @ExampleObject(
+                                name = "Not Found Error",
+                                summary = "Example of a 404 error response",
+                                value = "{\"error\": \"Skill/Category with id 1 not found\"}"
+                        )))
 })
-public @interface CommonEmployeeResponses {
+public @interface CommonSkillInCategoryResponses {
 }
