@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class) // Catch-all handler for unexpected exceptions
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        var errorResponse = new ErrorResponse(ex.getMessage());
+        var errorResponse = new ErrorResponse("Internal server error(invalid data)");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }

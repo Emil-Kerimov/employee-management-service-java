@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "No content returned (successful deleted)")
+        @ApiResponse(responseCode = "200", description = "OK. Operation executed successfully")
 })
-public @interface DeleteApiResponses {
+public @interface CommonSuccessfullyResponses {
 }

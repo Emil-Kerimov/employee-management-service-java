@@ -13,18 +13,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "OK. Operation executed successfully"),
-        @ApiResponse(responseCode = "404", description = "No Skill Category with this ID was found.",
+        @ApiResponse(responseCode = "500", description = "Internal server error(Invalid data)",
                 content = @Content(
                         mediaType = "application/json",
                         schema = @Schema(implementation = GlobalExceptionHandler.ErrorResponse.class),
                         examples = @ExampleObject(
-                                name = "Not Found Error",
-                                summary = "Example of a 404 error response",
-                                value = "{\"error\": \"Skill Category with id 1 not found\"}"
+                                name = "Internal server error",
+                                summary = "Example of a 500 error response",
+                                value = "{\"error\": \"Invalid data \"}"
                         )))
 })
-public @interface CommonSkillCategoryResponses {
+public @interface InternalServerErrorResponse {
 }

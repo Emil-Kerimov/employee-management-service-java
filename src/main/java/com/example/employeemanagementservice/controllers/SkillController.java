@@ -5,14 +5,19 @@ import com.example.employeemanagementservice.exceptions.GlobalExceptionHandler;
 import com.example.employeemanagementservice.models.Skill;
 import com.example.employeemanagementservice.services.SkillService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,76 +25,92 @@ import java.util.List;
 @RestController
 @RequestMapping("/skill-categories/{category_id}/skills")
 @Tag(name = "Skill management", description = "API for viewing, adding, deleting, and updating Skills")
+@Validated
 public class SkillController {
-    private final com.example.employeemanagementservice.services.SkillService SkillService;
+    private final SkillService SkillService;
 
     public SkillController(SkillService SkillService) {
         this.SkillService = SkillService;
     }
 
     @GetMapping
-    @CommonSkillCategoryResponses
+    @CommonSuccessfullyResponses
+    @NumericIdNotFoundResponse
+    @InternalServerErrorResponse
     @Operation(
             summary = "find all Skills in category",
             description = "returns all available Skills in Category from memory"
     )
-    public List<Skill> getSkillsInCategory(@PathVariable Integer category_id){
+    public List<Skill> getSkillsInCategory(@NumericIdParam @PathVariable Integer category_id){
         return SkillService.getSkillsInCategory(category_id);
     }
     @GetMapping("/{id}")
-    @CommonSkillInCategoryResponses
+    @CommonSuccessfullyResponses
+    @NumericIdNotFoundResponse
+    @InternalServerErrorResponse
     @Operation(
             summary = "find Skill with specified ID in current category",
             description = "returns Skill with specified Id in selected Category from memory"
     )
     public Skill getSkillById(
-            @Parameter(description = "ID of the category", example = "1")
+            @NumericIdParam
             @PathVariable Integer category_id,
-            @Parameter(description = "ID of the skill", example = "1")
+            @NumericIdParam
             @PathVariable Integer id){
         return SkillService.getSkillById(category_id, id);
     }
 
     @PostMapping
-    @CommonSkillInCategoryResponses
+    @CommonSuccessfullyResponses
+    @NumericIdNotFoundResponse
+    @InternalServerErrorResponse
     @Operation(summary = "create new Skill",
             description = "creates new Skill and returns it"
     )
-    public ResponseEntity<Skill> createSkill(@PathVariable Integer category_id, @RequestBody SkillCreateInCategoryRequest skillCreateInCategoryRequest){
+    public ResponseEntity<Skill> createSkill(@NumericIdParam @PathVariable Integer category_id,
+                                             @Valid @RequestBody SkillCreateInCategoryRequest skillCreateInCategoryRequest){
         Skill skill = SkillService.createSkill(category_id, skillCreateInCategoryRequest.name);
         return ResponseEntity.ok(skill);
     }
     @PutMapping("/{id}")
-    @CommonSkillInCategoryResponses
+    @CommonSuccessfullyResponses
+    @NumericIdNotFoundResponse
+    @InternalServerErrorResponse
     @Operation(
             summary = "update Skill with specified ID in current category",
             description = "returns updated Skill"
     )
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer category_id, @PathVariable Integer id, @RequestBody SkillPutRequest skillPutRequest){
+    public ResponseEntity<Skill> updateSkill(@NumericIdParam @PathVariable Integer category_id,
+                                             @NumericIdParam @PathVariable Integer id,
+                                             @Valid @RequestBody SkillPutRequest skillPutRequest){
         Skill skill = SkillService.updateSkillById(category_id, id, skillPutRequest.name, skillPutRequest.categoryId);
         return ResponseEntity.ok(skill);
     }
     @DeleteMapping("/{id}")
-    @ApiResponses({
-            @ApiResponse(responseCode = "404", description = "No Skill with this ID in selected category was found.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = GlobalExceptionHandler.ErrorResponse.class),
-                            examples = @ExampleObject(
-                                    name = "Not Found Error",
-                                    summary = "Example of a 404 error response",
-                                    value = "{\"error\": \"Skill with id 1 in category 1 not found\"}"
-                            )))
-    })
+    @NumericIdNotFoundResponse
+    @InternalServerErrorResponse
     @DeleteApiResponses
     @Operation(
             summary = "delete Skill with specified ID in selected category",
             description = "deletes Skill  with specified ID if exist, No content returns"
     )
-    public ResponseEntity<Void> deleteSkill(@PathVariable Integer category_id, @PathVariable Integer id){
+    public ResponseEntity<Void> deleteSkill(@NumericIdParam @PathVariable Integer category_id,
+                                            @NumericIdParam @PathVariable Integer id){
         SkillService.deleteSkillById(category_id, id);
         return ResponseEntity.noContent().build();
     }
-    public record SkillPutRequest(String name, Integer categoryId){}
-    public record SkillCreateInCategoryRequest(String name){}
+    public record SkillPutRequest(
+            @NotBlank(message = "Skill name should not be blank")
+            @Size(min = 3, max = 25, message = "Skill Name length should be 3 to 25 symbols long")
+            @Schema(description = "Skill name", example = "database skills")
+            String name,
+            @NotNull(message = "Category ID should not be empty")
+            @Positive
+            @Schema(description = "Skill Category ID", example = "1")
+            Integer categoryId){}
+    public record SkillCreateInCategoryRequest(
+            @NotBlank(message = "Skill name should not be blank")
+            @Size(min = 3, max = 25, message = "Skill Name length should be 3 to 25 symbols long")
+            @Schema(description = "Skill in category name", example = "database skills")
+            String name){}
 }
