@@ -8,34 +8,22 @@ import java.util.Map;
 import java.util.UUID;
 
 @Schema(
-        description = "Map of skills",
-        example = """
-                    {
-                      "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "categorySkills": {
-                        "1": [
-                              {
-                                "skillId": 101,
-                                "level": "EXPERT"
-                              }
-                            ],
-                        "2": [
-                              {
-                                "skillId": 101,
-                                "level": "EXPERT"
-                              }
-                            ],
-                        "3": [
-                              {
-                                "skillId": 101,
-                                "level": "EXPERT"
-                              }
-                            ]
-                          }
-                """
-)
+        description = "Collection of skills grouped by category for an employee")
 public class EmployeeSkillSet {
+    @Schema(
+            description = "Unique identifier of the employee",
+            example = "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+    )
     private UUID employeeId;
+    @Schema(
+            description = "Map where key is category ID and value is list of skills in this category",
+            example = """
+            {
+              "1": [{"skillId": 101, "level": "EXPERT"}],
+              "2": [{"skillId": 102, "level": "BEGINNER"}]
+            }
+            """
+    )
     private Map<Integer, List<EmployeeSkill>> categorySkills; // categoryId -> skills
 
     public EmployeeSkillSet(UUID employeeId) {

@@ -1,7 +1,20 @@
 package com.example.employeemanagementservice.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Skill assigned to an employee with skill id and a proficiency level")
 public class EmployeeSkill {
+    @Schema(
+            description = "ID of the skill",
+            example = "101",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private Integer skillId;
+    @Schema(
+            description = "Proficiency level of the skill",
+            example = "EXPERT",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private SkillLevel level;
 
     public EmployeeSkill() {

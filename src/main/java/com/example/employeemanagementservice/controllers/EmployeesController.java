@@ -127,6 +127,7 @@ public class EmployeesController {
         return ResponseEntity.ok(employeeSkillSet);
     }
     // DTO for Employee creation
+    @Schema(description = "Request body for creating and updating Employee")
     public record EmployeeRequest(
             @NotBlank(message = "First name should not be blank")
             @Size(min = 2, max = 25, message = "First Name length should be 2 to 25 symbols long")
@@ -145,6 +146,7 @@ public class EmployeesController {
             @Schema(description = "Birthday of the employee", example = "2000-01-01")
             LocalDate birthday) {}
     // DTO for SkillSet creation
+    @Schema(description = "Request body for creating Skill Set for Employee (UUID will be auto Generated)")
     public record SkillSetRequest(
             @Schema(
                     description = "Map of skills",

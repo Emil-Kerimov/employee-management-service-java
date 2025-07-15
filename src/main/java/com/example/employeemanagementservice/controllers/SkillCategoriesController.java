@@ -90,6 +90,7 @@ public class SkillCategoriesController {
         return ResponseEntity.noContent().build();
     }
 
+    @Schema(description = "Request body for creating and updating category")
     public record CategoryRequest(
             @NotBlank(message = "Category name should not be blank")
             @Size(min = 3, max = 25, message = "Category Name length should be 3 to 25 symbols long")

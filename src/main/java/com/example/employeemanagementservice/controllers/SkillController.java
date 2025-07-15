@@ -99,6 +99,7 @@ public class SkillController {
         SkillService.deleteSkillById(category_id, id);
         return ResponseEntity.noContent().build();
     }
+    @Schema(description = "Request body for updating Skill (its possible to transfer skill to another category)")
     public record SkillPutRequest(
             @NotBlank(message = "Skill name should not be blank")
             @Size(min = 3, max = 25, message = "Skill Name length should be 3 to 25 symbols long")
@@ -108,6 +109,7 @@ public class SkillController {
             @Positive
             @Schema(description = "Skill Category ID", example = "1")
             Integer categoryId){}
+    @Schema(description = "Request body for creating Skill in selected category")
     public record SkillCreateInCategoryRequest(
             @NotBlank(message = "Skill name should not be blank")
             @Size(min = 3, max = 25, message = "Skill Name length should be 3 to 25 symbols long")
