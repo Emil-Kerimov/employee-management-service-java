@@ -5,4 +5,4 @@ settings:
   applicationVersion: 1.0.0
 
   testMode:
-    enabled: true
+    enabled: false
