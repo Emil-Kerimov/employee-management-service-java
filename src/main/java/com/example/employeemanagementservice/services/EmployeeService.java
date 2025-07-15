@@ -11,29 +11,25 @@ import com.example.employeemanagementservice.models.Employee;
 import com.example.employeemanagementservice.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 @Service
-public class EmployeeService implements IEmployeeService {
+public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
-    @Override
     public Employee createEmployee(String firstName, String lastName, String title, LocalDate
             birthday) {
         Employee employee = new Employee(firstName, lastName, title, birthday);
         return employeeRepository.save(employee);
     }
-    @Override
     public Employee getEmployeeById(UUID id) {
         return Optional.ofNullable(employeeRepository.getEmployeeById(id))
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
-    @Override
     public List<Employee> getAllEmployee() {
         return new ArrayList<>(employeeRepository.findAll());
     }
-    @Override
     public Employee updateEmployee(UUID id, String firstName, String lastName, String title,
                                    LocalDate birthday) {
         Employee employee = Optional.ofNullable(employeeRepository.getEmployeeById(id))
@@ -46,7 +42,6 @@ public class EmployeeService implements IEmployeeService {
 
             return employeeRepository.save(employee);
     }
-    @Override
     public void deleteEmployee(UUID id) {
         if(!employeeRepository.delete(id)){
             throw new UserNotFoundException(id);
